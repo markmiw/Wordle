@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface RowProps {
   rowIndex: number;
@@ -50,18 +50,23 @@ function Row({ rowIndex, isEnabled, checkWord, setHighlight, rowRef }: RowProps)
           }}
           key={rowIndex * numOfLettersInRow + i}
           value={letters[i] || ''}
-          onKeyUp={(e) => checkWord(e, letters)}
+          onKeyUp={(e) => checkWord(e, letters , setLetters, inputRefs)}
           onKeyDown={(e) => handleBackSpace(e, i)}
           maxLength={1}
           onChange={(e) => handleLetterChange(e, i)}
           className={`tile ${setHighlight(rowIndex, i)}`}
           disabled={!isEnabled}
-          autoFocus={isEnabled && i === 0}
         />
       );
     }
     return row;
   }
+
+  useEffect(() => {
+    if (isEnabled && inputRefs.current[0]) {
+      inputRefs.current[0]?.focus(); // Programmatically focus the first input of the row
+    }
+  }, [isEnabled]);
 
   return <div className="row">{createRow()}</div>;
 }
